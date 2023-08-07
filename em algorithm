@@ -1,16 +1,26 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_blobs
-from sklearn.mixture import GaussianMixture
-X, y = make_blobs(n_samples=300, centers=3, cluster_std=1.0, random_state=42)
-n_components = 3
-gmm = GaussianMixture(n_components=n_components, random_state=42)
-gmm.fit(X)
-y_pred = gmm.predict(X)
-plt.scatter(X[:, 0], X[:, 1], c=y_pred, cmap='viridis', s=50, edgecolor='k')
-plt.scatter(gmm.means_[:, 0], gmm.means_[:, 1], c='red', s=200, marker='X', label='Cluster Centers')
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
-plt.title("Gaussian Mixture Model Clustering")
-plt.legend()
-plt.show()
+from scipy.stats import norm
+data = np.array([1.2, 2.3, 0.7, 1.6, 1.1, 1.8, 0.9, 2.2])
+mu1 = 0
+mu2 = 1
+sigma1 = 1
+sigma2 = 1
+p1 = 0.5
+p2 = 0.5
+for i in range(10):
+    likelihood1 = norm.pdf(data, mu1, sigma1)
+    likelihood2 = norm.pdf(data, mu2, sigma2)
+    weight1 = p1 * likelihood1 / (p1 * likelihood1 + p2 * likelihood2)
+    weight2 = p2 * likelihood2 / (p1 * likelihood1 + p2 * likelihood2)
+    mu1 = np.sum(weight1 * data) / np.sum(weight1)
+    mu2 = np.sum(weight2 * data) / np.sum(weight2)
+    sigma1 = np.sqrt(np.sum(weight1 * (data - mu1)**2) / np.sum(weight1))
+    sigma2 = np.sqrt(np.sum(weight2 * (data - mu2)**2) / np.sum(weight2))
+    p1 = np.mean(weight1)
+    p2 = np.mean(weight2)
+print("mu1:", mu1)
+print("mu2:", mu2)
+print("sigma1:", sigma1)
+print("sigma2:", sigma2)
+print("p1:", p1)
+print("p2:", p2)
